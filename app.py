@@ -1,10 +1,12 @@
 from flask import Flask, request
 from flask_restful import Resource, Api
 from flask_cors import CORS, cross_origin
-from easypeasy import query_pons_dictionary, extract_definitions, secret, query_spellchecker_service, cfg
+from easypeasy import query_pons_dictionary, extract_definitions, query_spellchecker_service, cfg
+import os
 
+secretkey = os.environ.get("DICT_SECRET_KEY")
 import re
-from os import path
+
 
 app = Flask(__name__)
 CORS(app)
@@ -25,7 +27,7 @@ api.add_resource(HelloWorld, '/')
 class Definitions(Resource):
     def get(self, query):
 
-        response = query_pons_dictionary(query=query, secret=secret)
+        response = query_pons_dictionary(query=query, secret=secretkey)
         result = {}
         result['definition'] = list(extract_definitions(response.json()))[0]['definition']
         result['definition_url'] = 'http://de.pons.com/%C3%BCbersetzung?' + response.url.split('?')[1]
@@ -72,7 +74,7 @@ class AnalyzeText(Resource):
                     common_words[word]
                 except KeyError:
 
-                    response = query_pons_dictionary(query=word, secret=secret)
+                    response = query_pons_dictionary(query=word, secret=secretkey)
                     definitions = extract_definitions(response.json())
                     definition = list(definitions)[0]['definition']
                     definition_url = 'http://de.pons.com/%C3%BCbersetzung?' + response.url.split('?')[1]
