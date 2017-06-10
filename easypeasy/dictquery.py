@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-
+from . import cfg
 
 def query_pons_dictionary(query, secret):
     """Makes a requst to Pons using their online API. Returns a response.
@@ -30,7 +30,8 @@ def extract_definitions(pons_response_dict):
 
 def query_spellchecker_service(text, port):
     """Returns list of misspalled words from text, after querying from service"""
-    url = 'http://localhost:8081/v2/check'
+    # url = 'http://localhost:8081/v2/check'
+    url = cfg.spellchecker_url
     jj = {'language': 'de-DE',
           'text': text,
           'motherTongue': 'de-DE',
