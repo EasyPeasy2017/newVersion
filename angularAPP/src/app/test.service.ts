@@ -13,10 +13,12 @@ export class TestService {
 
  getTextAnalysis(data){
    console.log(data);
+   var obj={};
+    obj['text'] = data;
       var requestoptions = new RequestOptions({
        method: RequestMethod.Post,
-       url: this.apiUrl+data,
-      // body: obj
+       url: this.apiUrl,
+      body: obj
      })
     return this.http.request(new Request(requestoptions))
     .map((res: Response) => {
