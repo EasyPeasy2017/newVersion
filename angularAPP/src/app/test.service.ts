@@ -7,17 +7,18 @@ export class TestService {
 
   private apiUrl:string;
   constructor(private http: Http) {
-    this.apiUrl ='https://wt-encisoenrique-gmail-com-0.run.webtask.io/medialab/fake-endpoint';
+    this.apiUrl ='http://localhost:5000/analyze';
+
  }
 
  getTextAnalysis(data){
    console.log(data);
-   var obj ={};
-   obj['text'] = data;
-       var requestoptions = new RequestOptions({
+   var obj={};
+    obj['text'] = data;
+      var requestoptions = new RequestOptions({
        method: RequestMethod.Post,
-       url: this.apiUrl/*+'/projects?client_id='+data.client_id*/,
-       body: obj
+       url: this.apiUrl,
+      body: obj
      })
     return this.http.request(new Request(requestoptions))
     .map((res: Response) => {
