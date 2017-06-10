@@ -34,7 +34,7 @@ api.add_resource(Definitions, '/defs/<string:query>')
 
 class AnalyzeText(Resource):
     def get(self, text):
-        words = re.sub("[^\w]", " ", text).split()
+        words = re.sub("[^\w]", " ", text).split() if text else []
         words = map(str.lower, words)
         words_not_found = []
         for word in words:
