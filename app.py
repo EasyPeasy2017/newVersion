@@ -2,7 +2,7 @@ from flask import Flask, request
 from flask_restful import Resource, Api
 from flask_cors import CORS, cross_origin
 from easypeasy import query_pons_dictionary, extract_definitions, secret, query_spellchecker_service, cfg
-
+import os
 import re
 from os import path
 
@@ -83,4 +83,4 @@ api.add_resource(AnalyzeText, '/analyze')
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host=os.environ.get('HOST'), port=int(os.environ.get('PORT')))

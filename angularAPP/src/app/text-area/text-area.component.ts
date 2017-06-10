@@ -82,7 +82,7 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
   initializePolling() {
 
   return Observable
-     .interval(5000)
+     .interval(10000)
      .flatMap(() => {
 
        var text =jQuery('#textarea').val();
