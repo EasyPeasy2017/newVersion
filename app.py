@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, send_from_directory, render_template
 from flask_restful import Resource, Api
 from flask_cors import CORS, cross_origin
 from easypeasy import query_pons_dictionary, extract_definitions, query_spellchecker_service, cfg
@@ -8,7 +8,7 @@ secretkey = os.environ.get("DICT_SECRET_KEY")
 import re
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='')
 CORS(app)
 api = Api(app)
 
@@ -17,12 +17,9 @@ with open('wiki_grunwortschatz.txt') as f:
     common_words = {line.strip().lower(): None for line in f.readlines()}
 
 
-class HelloWorld(Resource):
-    def get(self):
-        return {'hello': 'world'}
-
-api.add_resource(HelloWorld, '/')
-
+@app.route('/')
+def root():
+    return app.send_static_file('index.html')
 
 class Definitions(Resource):
     def get(self, query):

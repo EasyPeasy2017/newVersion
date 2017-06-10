@@ -291,7 +291,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var TestService = (function () {
     function TestService(http) {
         this.http = http;
-        this.apiUrl = 'https://wt-encisoenrique-gmail-com-0.run.webtask.io/medialab/fake-endpoint';
+        this.apiUrl = 'http://localhost:5000/analyze';
     }
     TestService.prototype.getTextAnalysis = function (data) {
         console.log(data);
@@ -299,7 +299,7 @@ var TestService = (function () {
         obj['text'] = data;
         var requestoptions = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["b" /* RequestOptions */]({
             method: __WEBPACK_IMPORTED_MODULE_1__angular_http__["c" /* RequestMethod */].Post,
-            url: this.apiUrl /*+'/projects?client_id='+data.client_id*/,
+            url: this.apiUrl,
             body: obj
         });
         return this.http.request(new __WEBPACK_IMPORTED_MODULE_1__angular_http__["d" /* Request */](requestoptions))
@@ -346,26 +346,29 @@ var TextAreaComponent = (function () {
     function TextAreaComponent(textService) {
         //console.log(words);
         this.textService = textService;
+        this.notify = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["r" /* EventEmitter */]();
     }
     TextAreaComponent.prototype.ngAfterViewInit = function () {
+        var _this = this;
         this.initializePolling().subscribe(function (data) {
-            jQuery('#feedback').empty();
+            // jQuery('#feedback').empty();
+            _this.notify.emit(data);
             console.log(data);
             console.log(data.filter(function (elem) {
-                if (elem.problem == "not in list") {
+                if (elem.problem == "NotFoundInCommonList") {
                     return elem;
                 }
             }).map(function (elem) { return elem.word; }));
             data.forEach(function (item) {
-                jQuery('#feedback').append('<p>' + item.word + '</p>');
+                //jQuery('#feedback').append('<p>'+item.word+'</p>');
             });
             jQuery('.string-example').highlightWithinTextarea({
                 highlight: data.filter(function (elem) {
-                    if (elem.problem == "not in list") {
+                    if (elem.problem == "NotFoundInCommonList") {
                         return elem;
                     }
                 }).map(function (elem) { return elem.word; }),
-                className: 'blue' // string, regexp, array, function, or custom object
+                className: 'blue'
             });
         });
     };
@@ -389,17 +392,16 @@ var TextAreaComponent = (function () {
         return __WEBPACK_IMPORTED_MODULE_2_rxjs_Rx__["Observable"]
             .interval(5000)
             .flatMap(function () {
-            console.log();
             var text = jQuery('#textarea').val();
             return _this.textService.getTextAnalysis(text);
-        }); //.map( res => res.json() )
-        /*
-              .subscribe(data => {
-                 console.log(data)
-              });*/
+        });
     };
     return TextAreaComponent;
 }());
+__decorate([
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["v" /* Output */])(),
+    __metadata("design:type", typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["r" /* EventEmitter */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["r" /* EventEmitter */]) === "function" && _a || Object)
+], TextAreaComponent.prototype, "notify", void 0);
 TextAreaComponent = __decorate([
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_14" /* Component */])({
         selector: 'app-text-area',
@@ -407,10 +409,10 @@ TextAreaComponent = __decorate([
         styles: [__webpack_require__(212)],
         providers: [__WEBPACK_IMPORTED_MODULE_1__test_service__["a" /* TestService */]]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__test_service__["a" /* TestService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__test_service__["a" /* TestService */]) === "function" && _a || Object])
+    __metadata("design:paramtypes", [typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__test_service__["a" /* TestService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__test_service__["a" /* TestService */]) === "function" && _b || Object])
 ], TextAreaComponent);
 
-var _a;
+var _a, _b;
 //# sourceMappingURL=text-area.component.js.map
 
 /***/ }),
@@ -568,21 +570,21 @@ module.exports = "<!--\n<h1>\n  {{title}}\n</h1>\n\n<app-text-area></app-text-ar
 /***/ 214:
 /***/ (function(module, exports) {
 
-module.exports = "<app-new-work></app-new-work>\n"
+module.exports = "<app-new-work></app-new-work>\n<section class=\"archivos\">\n<div class=\"container\">\n<div class=\"mydashboard\">\n    <h2>I want to work with my texts:</h2>\n<div class=\"row\">\n    <div class=\"col-md-3\">\n    <a href=\"#.html\">\n\n    <div class=\"card\">\n\n\n   <h4> <i class=\"fa fa-file-text-o fa-4x\" aria-hidden=\"true\"></i> Demo</h4>\n   <p>Beginner</p>\n   <p>10/06/17</p>\n\n    </div>\n      </a>\n  </div>\n  <div class=\"col-md-3\">\n      <a href=\"#.html\">\n\n    <div class=\"card\">\n\n    <h4> <i class=\"fa fa-file-text-o fa-4x\" aria-hidden=\"true\"></i> Demo2</h4>\n   <p>Beginner</p>\n   <p>10/06/17</p>\n\n    </div>\n      </a>\n  </div>\n  <div class=\"col-md-3\">\n      <a href=\"#.html\">\n\n    <div class=\"card\">\n\n    <h4> <i class=\"fa fa-file-text-o fa-4x\" aria-hidden=\"true\"></i> Demo3</h4>\n   <p>Advanced</p>\n   <p>10/06/17</p>\n\n    </div>\n      </a>\n  </div>\n</div>\n</div>\n </div>\n </section>\n"
 
 /***/ }),
 
 /***/ 215:
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"blue\"></div>\n<div class=\"container\">\n    <h1>New text</h1>\n    <div class=\"row\">\n        <div class=\"col-md-10 col-md-offset-1\">\n            <p>Instructions </p>\n        </div>\n    </div>\n    <div class=\"row\">\n    <div class=\"col-md-4\">\n      <p class=\"load\"> I want to write a text in </p>\n        </div>\n    <div class=\"col-md-4\">\n        <select class=\"form-control input-lg\">\n        <option value=\"english\">English</option>\n  <option value=\"spanish\">Spanish</option>\n  <option value=\"french\">French</option>\n\n        </select>\n        </div>\n\n </div>\n\n<div class=\"row\">\n    <div class=\"col-md-4\">\n      <p class=\"load\"> for a  </p>\n        </div>\n    <div class=\"col-md-4\">\n        <select class=\"form-control input-lg\">\n              <option value=\"beginner\">beginners</option>\n              <option value=\"intermediate\">intermediate</option>\n              <option value=\"advance\">Advance</option>\n            </select>\n        </div>\n        <div class=\"col-md-1\">\n           <p class=\"load\"> level</p>\n        </div>\n </div>\n\n</div>\n<div class=\"row\">\n  <div class=\"col-md-3 col-md-offset-3\">\n    <a [routerLink]=\"['/editor']\"><button type=\"button\" class=\"btn btn-dark btn-lg\">GO</button></a>\n  </div>\n<div>\n"
+module.exports = "<div class=\"blue\"></div>\n<div class=\"container\">\n    <h1>New text</h1>\n    <div class=\"row\">\n        <div class=\"col-md-10 col-md-offset-1\">\n            <p>Instructions </p>\n        </div>\n    </div>\n    <div class=\"row\">\n    <div class=\"col-md-4\">\n      <p class=\"load\"> I want to write a text in </p>\n        </div>\n    <div class=\"col-md-4\">\n        <select class=\"form-control input-lg\">\n        <option value=\"German\">German</option>\n\n        </select>\n        </div>\n\n </div>\n\n<div class=\"row\">\n    <div class=\"col-md-4\">\n      <p class=\"load\"> for a  </p>\n        </div>\n    <div class=\"col-md-4\">\n        <select class=\"form-control input-lg\">\n              <option value=\"beginner\">beginners</option>\n              <option value=\"intermediate\">intermediate</option>\n              <option value=\"advance\">Advance</option>\n            </select>\n        </div>\n        <div class=\"col-md-1\">\n           <p class=\"load\"> level</p>\n        </div>\n </div>\n\n</div>\n<div class=\"row\">\n  <div class=\"col-md-3 col-md-offset-3\">\n    <a [routerLink]=\"['/editor']\"><button type=\"button\" class=\"btn btn-dark btn-lg\">GO</button></a>\n  </div>\n<div>\n"
 
 /***/ }),
 
 /***/ 216:
 /***/ (function(module, exports) {
 
-module.exports = "<h1>\n  title\n</h1>\n\n<div class=\"row\">\n  <div class=\"col-xs-6\">\n    <app-text-area ></app-text-area>\n  </div>\n  <div id=\"feedback\" class=\"col-xs-6\">.col-xs-6</div>\n</div>\n"
+module.exports = "<nav class=\"navbar navbar-default\">\n  <div class=\"container-fluid\">\n    <!-- Brand and toggle get grouped for better mobile display -->\n    <div class=\"navbar-header\">\n      <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1\" aria-expanded=\"false\">\n        <span class=\"sr-only\">Toggle navigation</span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n      </button>\n\n    </div>\n\n    <!-- Collect the nav links, forms, and other content for toggling -->\n    <div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-1\">\n      <ul class=\"nav navbar-nav\">\n        <li class=\"active\"><a href=\"#.html\">Easy-Peasy</a></li>\n        <li><a href=\"#\"><i class=\"fa fa-floppy-o\" aria-hidden=\"true\"></i></a></li>\n        <li><a href=\"#\"><i class=\"fa fa-download\" aria-hidden=\"true\"></i></a></li>\n        <li><a href=\"#\"><i class=\"fa fa-trash\" aria-hidden=\"true\"></i></a></li>\n        <li><a href=\"#\"><i class=\"fa fa-undo\" aria-hidden=\"true\"></i></a></li>\n\n\n\n\n\n      </ul>\n    </div><!-- /.navbar-collapse -->\n  </div><!-- /.container-fluid -->\n</nav>\n<h1>\n  title\n</h1>\n\n<div class=\"row\">\n  <div class=\"col-xs-6\">\n    <app-text-area (notify)='onNotify($event)' ></app-text-area>\n  </div>\n  <div id=\"feedback\" class=\"col-xs-6\">{{words}}</div>\n</div>\n"
 
 /***/ }),
 
@@ -670,6 +672,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var EditorComponent = (function () {
     function EditorComponent() {
     }
+    EditorComponent.prototype.onNotify = function (message) {
+        console.log(message);
+        this.words = [];
+        this.words = message.map(function (item) { return item.word; });
+    };
     EditorComponent.prototype.ngOnInit = function () {
     };
     return EditorComponent;
