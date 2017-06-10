@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_restful import Resource, Api
 from flask_cors import CORS, cross_origin
 from easypeasy import query_pons_dictionary, extract_definitions, secret
@@ -23,6 +23,7 @@ api.add_resource(HelloWorld, '/')
 
 class Definitions(Resource):
     def get(self, query):
+
         response = query_pons_dictionary(query=query, secret=secret)
         result = {}
         result['definition'] = list(extract_definitions(response.json()))[0]['definition']
@@ -32,8 +33,12 @@ class Definitions(Resource):
 api.add_resource(Definitions, '/defs/<string:query>')
 
 
+
 class AnalyzeText(Resource):
-    def get(self, text):
+    def post(self):
+
+        text = request.json['text']
+
         words = re.sub("[^\w]", " ", text).split() if text else []
         words = map(str.lower, words)
         words_not_found = []
@@ -53,8 +58,8 @@ class AnalyzeText(Resource):
 
         return words_not_found
 
-api.add_resource(AnalyzeText, '/analyze/<string:text>')
-
+# api.add_resource(AnalyzeText, '/analyze/<string:text>')
+api.add_resource(AnalyzeText, '/analyze')
 
 
 if __name__ == '__main__':
