@@ -7,7 +7,7 @@ export class TestService {
 
   private apiUrl:string;
   constructor(private http: Http) {
-    this.apiUrl ='http://localhost:5000/analyze/';
+    this.apiUrl ='http://localhost:5000/analyze';
 
  }
 

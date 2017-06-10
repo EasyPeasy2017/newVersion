@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, EventEmitter, Output } from '@angular/core';
 declare let jQuery: any;
 import {TestService} from '../test.service';
 import { words } from './beginner-words-data';
@@ -12,7 +12,7 @@ import {Observable} from 'rxjs/Rx';
   providers:[TestService]
 })
 export class TextAreaComponent implements OnInit, AfterViewInit {
-
+@Output() notify: EventEmitter<any> = new EventEmitter<any>();
   constructor(public textService:TestService) {
     //console.log(words);
 
@@ -23,23 +23,24 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.initializePolling().subscribe(data => {
-       jQuery('#feedback').empty();
+      // jQuery('#feedback').empty();
+       this.notify.emit(data);
        console.log(data);
        console.log(
        data.filter((elem)=>{
-         if(elem.problem=="not in list"){
+         if(elem.problem=="NotFoundInCommonList"){
            return elem;
          }
        }).map((elem)=>{return elem.word})
      );
 
        data.forEach((item)=>{
-         jQuery('#feedback').append('<p>'+item.word+'</p>');
+         //jQuery('#feedback').append('<p>'+item.word+'</p>');
        });
 
        jQuery('.string-example').highlightWithinTextarea({
        highlight: data.filter((elem)=>{
-         if(elem.problem=="not in list"){
+         if(elem.problem=="NotFoundInCommonList"){
            return elem;
          }
        }).map((elem)=>{return elem.word}),
@@ -69,14 +70,11 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
   return Observable
      .interval(5000)
      .flatMap(() => {
-       console.log( );
+
        var text =jQuery('#textarea').val();
+
        return  this.textService.getTextAnalysis(text);
-     })//.map( res => res.json() )
-/*
-      .subscribe(data => {
-         console.log(data)
-      });*/
+     })
 }
 
 }
