@@ -29,12 +29,18 @@
   </div><!-- /.container-fluid -->
 </nav>
 <h1>
-  title
+  New article
 </h1>
 
 <div class="row">
   <div class="col-xs-6">
     <app-text-area (notify)='onNotify($event)' ></app-text-area>
   </div>
-  <div id="feedback" class="col-xs-6">{{words}}</div>
+  <div style="padding-right:40px;" id="feedback" class="col-xs-6" *ngFor="let word of words">
+    <p style="font-size:1.5em;"><strong>{{word.word}}</strong></p>
+    <p style="padding-left:10px;">definition: {{word.definition}}</p>
+    <p style="padding-left:10px; margin-top:0px;" [hidden]="word.suggestions>=0"><strong>suggestions:</strong><span *ngFor="let suggestion of word.suggestions">{{suggestion}}</span></p>
+    <p  style="padding-left:10px; margin-top:0px;"[hidden]="word.suggestions<0"><strong>no suggestions for this word</strong></p>
+
+  </div>
 </div>
