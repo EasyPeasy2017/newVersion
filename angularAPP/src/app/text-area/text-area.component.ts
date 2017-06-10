@@ -39,12 +39,26 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
        });
 
        jQuery('.string-example').highlightWithinTextarea({
-       highlight: data.filter((elem)=>{
-         if(elem.problem=="NotFoundInCommonList"){
-           return elem;
-         }
-       }).map((elem)=>{return elem.word}),
-       className: 'blue'
+         highlight: [
+        {
+          highlight: data.filter((elem)=>{
+            if(elem.problem=="NotFoundInCommonList"){
+              return elem;
+            }
+          }).map((elem)=>{return elem.word}),
+          className: 'blue',
+        },
+        {
+          highlight: data.filter((elem)=>{
+            if(elem.problem=="SpellingError"){
+              return elem;
+            }
+          }).map((elem)=>{return elem.word}),
+          className: 'red'
+        },
+      ]
+
+
       });
     })
   }
@@ -68,7 +82,7 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
   initializePolling() {
 
   return Observable
-     .interval(5000)
+     .interval(10000)
      .flatMap(() => {
 
        var text =jQuery('#textarea').val();
