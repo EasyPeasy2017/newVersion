@@ -1,7 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "outDir": "./static/out-tsc",
+    "outDir": "../static/out-tsc",
     "baseUrl": "src",
     "sourceMap": true,
     "declaration": false,
