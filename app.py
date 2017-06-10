@@ -1,15 +1,11 @@
 from flask import Flask, request, send_from_directory, render_template
 from flask_restful import Resource, Api
 from flask_cors import CORS, cross_origin
-<<<<<<< HEAD
-from easypeasy import query_pons_dictionary, extract_definitions, secret, query_spellchecker_service, cfg
-import os
-=======
+
 from easypeasy import query_pons_dictionary, extract_definitions, query_spellchecker_service, cfg
 import os
 
 secretkey = os.environ.get("DICT_SECRET_KEY")
->>>>>>> fe64a98a36311ce6b5fa192e1faec69529f32536
 import re
 
 

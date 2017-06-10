@@ -291,7 +291,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var TestService = (function () {
     function TestService(http) {
         this.http = http;
-        this.apiUrl = 'http://localhost:5000/analyze';
+        this.apiUrl = 'https://easy-peasy.herokuapp.com/analyze';
     }
     TestService.prototype.getTextAnalysis = function (data) {
         console.log(data);
@@ -363,12 +363,24 @@ var TextAreaComponent = (function () {
                 //jQuery('#feedback').append('<p>'+item.word+'</p>');
             });
             jQuery('.string-example').highlightWithinTextarea({
-                highlight: data.filter(function (elem) {
-                    if (elem.problem == "NotFoundInCommonList") {
-                        return elem;
-                    }
-                }).map(function (elem) { return elem.word; }),
-                className: 'blue'
+                highlight: [
+                    {
+                        highlight: data.filter(function (elem) {
+                            if (elem.problem == "NotFoundInCommonList") {
+                                return elem;
+                            }
+                        }).map(function (elem) { return elem.word; }),
+                        className: 'blue',
+                    },
+                    {
+                        highlight: data.filter(function (elem) {
+                            if (elem.problem == "SpellingError") {
+                                return elem;
+                            }
+                        }).map(function (elem) { return elem.word; }),
+                        className: 'red'
+                    },
+                ]
             });
         });
     };
@@ -390,7 +402,7 @@ var TextAreaComponent = (function () {
     TextAreaComponent.prototype.initializePolling = function () {
         var _this = this;
         return __WEBPACK_IMPORTED_MODULE_2_rxjs_Rx__["Observable"]
-            .interval(5000)
+            .interval(10000)
             .flatMap(function () {
             var text = jQuery('#textarea').val();
             return _this.textService.getTextAnalysis(text);
@@ -584,7 +596,7 @@ module.exports = "<div class=\"blue\"></div>\n<div class=\"container\">\n    <h1
 /***/ 216:
 /***/ (function(module, exports) {
 
-module.exports = "<nav class=\"navbar navbar-default\">\n  <div class=\"container-fluid\">\n    <!-- Brand and toggle get grouped for better mobile display -->\n    <div class=\"navbar-header\">\n      <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1\" aria-expanded=\"false\">\n        <span class=\"sr-only\">Toggle navigation</span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n      </button>\n\n    </div>\n\n    <!-- Collect the nav links, forms, and other content for toggling -->\n    <div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-1\">\n      <ul class=\"nav navbar-nav\">\n        <li class=\"active\"><a href=\"#.html\">Easy-Peasy</a></li>\n        <li><a href=\"#\"><i class=\"fa fa-floppy-o\" aria-hidden=\"true\"></i></a></li>\n        <li><a href=\"#\"><i class=\"fa fa-download\" aria-hidden=\"true\"></i></a></li>\n        <li><a href=\"#\"><i class=\"fa fa-trash\" aria-hidden=\"true\"></i></a></li>\n        <li><a href=\"#\"><i class=\"fa fa-undo\" aria-hidden=\"true\"></i></a></li>\n\n\n\n\n\n      </ul>\n    </div><!-- /.navbar-collapse -->\n  </div><!-- /.container-fluid -->\n</nav>\n<h1>\n  title\n</h1>\n\n<div class=\"row\">\n  <div class=\"col-xs-6\">\n    <app-text-area (notify)='onNotify($event)' ></app-text-area>\n  </div>\n  <div id=\"feedback\" class=\"col-xs-6\">{{words}}</div>\n</div>\n"
+module.exports = "<nav class=\"navbar navbar-default\">\n  <div class=\"container-fluid\">\n    <!-- Brand and toggle get grouped for better mobile display -->\n    <div class=\"navbar-header\">\n      <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1\" aria-expanded=\"false\">\n        <span class=\"sr-only\">Toggle navigation</span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n      </button>\n\n    </div>\n\n    <!-- Collect the nav links, forms, and other content for toggling -->\n    <div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-1\">\n      <ul class=\"nav navbar-nav\">\n        <li class=\"active\"><a href=\"#.html\">Easy-Peasy</a></li>\n        <li><a href=\"#\"><i class=\"fa fa-floppy-o\" aria-hidden=\"true\"></i></a></li>\n        <li><a href=\"#\"><i class=\"fa fa-download\" aria-hidden=\"true\"></i></a></li>\n        <li><a href=\"#\"><i class=\"fa fa-trash\" aria-hidden=\"true\"></i></a></li>\n        <li><a href=\"#\"><i class=\"fa fa-undo\" aria-hidden=\"true\"></i></a></li>\n\n\n\n\n\n      </ul>\n    </div><!-- /.navbar-collapse -->\n  </div><!-- /.container-fluid -->\n</nav>\n<h1>\n  New article\n</h1>\n\n<div class=\"row\">\n  <div class=\"col-xs-6\">\n    <app-text-area (notify)='onNotify($event)' ></app-text-area>\n  </div>\n  <div style=\"padding-right:40px;\" id=\"feedback\" class=\"col-xs-6\" *ngFor=\"let word of words\">\n    <p style=\"font-size:1.5em;\"><strong>{{word.word}}</strong></p>\n    <p style=\"padding-left:10px;\">definition: {{word.definition}}</p>\n    <p style=\"padding-left:10px; margin-top:0px;\" [hidden]=\"word.suggestions>=0\"><strong>suggestions:</strong><span *ngFor=\"let suggestion of word.suggestions\">{{suggestion}}</span></p>\n    <p  style=\"padding-left:10px; margin-top:0px;\"[hidden]=\"word.suggestions<0\"><strong>no suggestions for this word</strong></p>\n    <p  style=\"padding-left:10px; margin-top:0px;\"><a href=\"word.definition_url\" target=\"_blank\"></a></p>\n\n  </div>\n</div>\n"
 
 /***/ }),
 
@@ -605,7 +617,7 @@ module.exports = "<div class=\"editable\">\n   <p>My father’s family name bein
 /***/ 219:
 /***/ (function(module, exports) {
 
-module.exports = "<textarea id=\"textarea\" class=\"string-example hwt-input hwt-content\" spellcheck=\"false\"\nplaceholder=\"Start writting :D.\"\nmaxlength=\"100000\" \n  (input)=\"myMethod($event.target.value)\"\n></textarea>\n"
+module.exports = "<textarea id=\"textarea\" class=\"string-example hwt-input hwt-content\" spellcheck=\"false\"\nplaceholder=\"Start writting :D.\"\nmaxlength=\"100000\" style=\"width:600px; height:1000px;\"\n  (input)=\"myMethod($event.target.value)\"\n></textarea>\n"
 
 /***/ }),
 
@@ -671,11 +683,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 var EditorComponent = (function () {
     function EditorComponent() {
+        this.words = [];
     }
     EditorComponent.prototype.onNotify = function (message) {
         console.log(message);
-        this.words = [];
-        this.words = message.map(function (item) { return item.word; });
+        this.words = message;
+        //this.words =message.map((item)=>item.word);
     };
     EditorComponent.prototype.ngOnInit = function () {
     };
