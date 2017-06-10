@@ -83,4 +83,4 @@ api.add_resource(AnalyzeText, '/analyze')
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host=os.environ.get('HOST'), port=int(os.environ.get('PORT')))
+    app.run(debug=True,  port=int(os.environ.get('PORT')))
