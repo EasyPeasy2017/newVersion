@@ -43,7 +43,7 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
            return elem;
          }
        }).map((elem)=>{return elem.word}),
-       className: 'blue'// string, regexp, array, function, or custom object
+       className: 'blue'
       });
     })
   }
