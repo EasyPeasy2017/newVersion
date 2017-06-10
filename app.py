@@ -1,7 +1,8 @@
 from flask import Flask, request
 from flask_restful import Resource, Api
 from flask_cors import CORS, cross_origin
-from easypeasy import query_pons_dictionary, extract_definitions, secret
+from easypeasy import query_pons_dictionary, extract_definitions, secret, query_spellchecker_service, cfg
+
 import re
 from os import path
 
@@ -34,29 +35,48 @@ api.add_resource(Definitions, '/defs/<string:query>')
 
 
 
+class WordResult:
+    def __init__(self, word, problem, suggestions=[], definition='definition string', definition_url=''):
+        self.word = word
+        self.problem = problem
+        self.suggestions = suggestions
+        self.definition = definition
+        self.definition_url = definition_url
+
+
 class AnalyzeText(Resource):
     def post(self):
 
+        problem_words = set()
+        results = []
         text = request.json['text']
 
+        # Spellcheck
+        misspelled_words = query_spellchecker_service(text=text, port=cfg.spellchecker_port)
+        print(f'Misspelled Words: {misspelled_words}')
+
+        for word in misspelled_words:
+            if word not in problem_words:
+                result = WordResult(word=word, suggestions=[], problem='SpellingError',
+                                    definition='definition string',
+                                    definition_url="http://de.pons.com/%C3%BCbersetzung?l=dedx&q=kind&in=de&language=de")
+                problem_words.add(word)
+                results.append(result.__dict__)
+
+
+        # Check for existence in word list
         words = re.sub("[^\w]", " ", text).split() if text else []
-        words = map(str.lower, words)
-        words_not_found = []
         for word in words:
-            try:
-                common_words[word]
-            except KeyError:
-                result = {
-                    'word': word,
-                    'suggestions': [],
-                    'problem': 'NotFoundInCommonList',
-                    'definition': 'definition string',
-                    'definition_url': "http://de.pons.com/%C3%BCbersetzung?l=dedx&q=kind&in=de&language=de",
-                }
-                words_not_found.append(result)
+            if word not in problem_words:
+                try:
+                    common_words[word]
+                except KeyError:
+                    result = WordResult(word=word, suggestions=[], problem='NotFoundInCommonList',
+                                        definition='definition string', definition_url="http://de.pons.com/%C3%BCbersetzung?l=dedx&q=kind&in=de&language=de")
+                    problem_words.add(word)
+                    results.append(result.__dict__)
 
-
-        return words_not_found
+        return results
 
 # api.add_resource(AnalyzeText, '/analyze/<string:text>')
 api.add_resource(AnalyzeText, '/analyze')
