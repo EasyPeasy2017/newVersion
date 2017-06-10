@@ -41,6 +41,7 @@
     <p style="padding-left:10px;">definition: {{word.definition}}</p>
     <p style="padding-left:10px; margin-top:0px;" [hidden]="word.suggestions>=0"><strong>suggestions:</strong><span *ngFor="let suggestion of word.suggestions">{{suggestion}}</span></p>
     <p  style="padding-left:10px; margin-top:0px;"[hidden]="word.suggestions<0"><strong>no suggestions for this word</strong></p>
+    <p  style="padding-left:10px; margin-top:0px;"><a href="word.definition_url" target="_blank"></a></p>
 
   </div>
 </div>
