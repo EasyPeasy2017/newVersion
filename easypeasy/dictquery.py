@@ -20,9 +20,9 @@ def extract_definitions(pons_response_dict):
                 def_html = dd['translations'][0]['source']
                 soup = BeautifulSoup(def_html, 'html5lib')
                 span = soup.span
-                if 'definition' in span['class']:
+                if span and 'definition' in span['class']:
                     definition = {
-                        'wordclass': ddd['wordclass'],
+                        # 'wordclass': ddd['wordclass'],
                         'definition': soup.span.text
                     }
                     yield definition

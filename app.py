@@ -58,8 +58,8 @@ class AnalyzeText(Resource):
         for word in misspelled_words:
             if word not in problem_words:
                 result = WordResult(word=word, suggestions=[], problem='SpellingError',
-                                    definition='definition string',
-                                    definition_url="http://de.pons.com/%C3%BCbersetzung?l=dedx&q=kind&in=de&language=de")
+                                    definition='',
+                                    definition_url="")
                 problem_words.add(word)
                 results.append(result.__dict__)
 
@@ -71,8 +71,15 @@ class AnalyzeText(Resource):
                 try:
                     common_words[word]
                 except KeyError:
+
+                    response = query_pons_dictionary(query=word, secret=secret)
+                    definitions = extract_definitions(response.json())
+                    definition = list(definitions)[0]['definition']
+                    definition_url = 'http://de.pons.com/%C3%BCbersetzung?' + response.url.split('?')[1]
+
                     result = WordResult(word=word, suggestions=[], problem='NotFoundInCommonList',
-                                        definition='definition string', definition_url="http://de.pons.com/%C3%BCbersetzung?l=dedx&q=kind&in=de&language=de")
+                                        definition=definition if definition else '',
+                                        definition_url=definition_url if definition_url else '')
                     problem_words.add(word)
                     results.append(result.__dict__)
 
