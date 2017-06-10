@@ -53,7 +53,7 @@ class AnalyzeText(Resource):
 
         # Spellcheck
         misspelled_words = query_spellchecker_service(text=text, port=cfg.spellchecker_port)
-        print(f'Misspelled Words: {misspelled_words}')
+
 
         for word in misspelled_words:
             if word not in problem_words:
