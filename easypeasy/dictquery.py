@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-
+from . import cfg
 
 def query_pons_dictionary(query, secret):
     """Makes a requst to Pons using their online API. Returns a response.
@@ -28,3 +28,25 @@ def extract_definitions(pons_response_dict):
                     yield definition
 
 
+def query_spellchecker_service(text, port):
+    """Returns list of misspalled words from text, after querying from service"""
+    # url = 'http://localhost:8081/v2/check'
+    url = cfg.spellchecker_url
+    jj = {'language': 'de-DE',
+          'text': text,
+          'motherTongue': 'de-DE',
+          'enabledOnly': False}
+    header = {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json',
+    }
+    r = requests.get(url, params=jj, headers=header)
+
+    misspelled_words = []
+    for match in r.json()['matches']:
+        offset, length = match['offset'], match['length']
+        misspelled_word = match['context']['text'][offset: offset + length]
+        misspelled_word.strip()
+        misspelled_words.append(misspelled_word)
+
+    return misspelled_words
