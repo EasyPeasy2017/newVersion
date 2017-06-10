@@ -66,6 +66,7 @@ class AnalyzeText(Resource):
 
         # Check for existence in word list
         words = re.sub("[^\w]", " ", text).split() if text else []
+        words = map(str.lower, words)
         for word in words:
             if word not in problem_words:
                 try:
