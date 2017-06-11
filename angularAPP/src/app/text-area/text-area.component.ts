@@ -1,8 +1,10 @@
-import { Component, OnInit, AfterViewInit, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, AfterViewInit, EventEmitter, Output, Input } from '@angular/core';
 declare let jQuery: any;
 import {TestService} from '../test.service';
 import { words } from './beginner-words-data';
 import {Observable} from 'rxjs/Rx';
+import {Subject} from 'rxjs/Subject';
+
 
 
 @Component({
@@ -13,6 +15,7 @@ import {Observable} from 'rxjs/Rx';
 })
 export class TextAreaComponent implements OnInit, AfterViewInit {
 @Output() notify: EventEmitter<any> = new EventEmitter<any>();
+@Input() parentSubject:Subject<any>;
   constructor(public textService:TestService) {
     //console.log(words);
 
@@ -22,47 +25,47 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
 
 
   ngAfterViewInit() {
-    this.initializePolling().subscribe(data => {
-      // jQuery('#feedback').empty();
-       this.notify.emit(data);
-       console.log(data);
-       console.log(
-       data.filter((elem)=>{
-         if(elem.problem=="NotFoundInCommonList"){
-           return elem;
-         }
-       }).map((elem)=>{return elem.word})
-     );
 
-       data.forEach((item)=>{
-         //jQuery('#feedback').append('<p>'+item.word+'</p>');
-       });
-
-       jQuery('.string-example').highlightWithinTextarea({
-         highlight: [
-        {
-          highlight: data.filter((elem)=>{
-            if(elem.problem=="NotFoundInCommonList"){
-              return elem;
-            }
-          }).map((elem)=>{return elem.word}),
-          className: 'blue',
-        },
-        {
-          highlight: data.filter((elem)=>{
-            if(elem.problem=="SpellingError"){
-              return elem;
-            }
-          }).map((elem)=>{return elem.word}),
-          className: 'red'
-        },
-      ]
-
-
-      });
-    })
   }
   ngOnInit() {
+    this.parentSubject.subscribe(event => {
+      // called when the notifyChildren method is
+      // called in the parent component
+    
+      var text =jQuery('#textarea').val();
+      this.textService.getTextAnalysis(text).subscribe(data => {
+        // jQuery('#feedback').empty();
+         this.notify.emit(data);
+         console.log(data);
+         console.log(
+         data.filter((elem)=>{
+           if(elem.problem=="NotFoundInCommonList"){
+             return elem;
+           }
+         }).map((elem)=>{return elem.word})
+       );
+         jQuery('.string-example').highlightWithinTextarea({
+           highlight: [
+          {
+            highlight: data.filter((elem)=>{
+              if(elem.problem=="NotFoundInCommonList"){
+                return elem;
+              }
+            }).map((elem)=>{return elem.word}),
+            className: 'blue',
+          },
+          {
+            highlight: data.filter((elem)=>{
+              if(elem.problem=="SpellingError"){
+                return elem;
+              }
+            }).map((elem)=>{return elem.word}),
+            className: 'red'
+          },
+        ]
+        });
+      })
+    });
   }
 
   myMethod(event:string){
@@ -79,6 +82,10 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
   //  console.log(event.replace( /\n/g, " " ).split( " " ));
   }
 
+  checkButton(){
+    console.log('button');
+
+  }
   initializePolling() {
 
   return Observable
