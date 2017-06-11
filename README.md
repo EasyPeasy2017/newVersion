@@ -31,3 +31,6 @@ Like this, it gets easier for journalists to adapt and/or create meaningful cont
   - automated search if a synonym of the word is included in the basic German vocabulary list
   - if not, Possibility to adapt word definitions to use them in the final article and explain difficult vocabulary to the readers
 
+## Test Out Our Prototype!
+
+We've deployed our prototype at Heroku (http://easypease2.herokuapp.com/).  It is not ready for use, but should give you an idea of our goals and interface.
